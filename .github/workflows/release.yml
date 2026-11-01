@@ -1,0 +1,31 @@
+name: Release
+
+# Push a tag like v1.0.1 to build sclogsync.exe and publish it with SHA256SUMS as a GitHub release.
+# SC Log Viewer servers read the latest release (version, exe URL, SHA-256) for downloads and self-update.
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Test
+        run: |
+          go vet ./...
+          go test ./...
+      - name: Build
+        run: VERSION="${GITHUB_REF_NAME#v}" ./build.sh
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/sclogsync.exe dist/SHA256SUMS \
+            --title "SCLogSync ${GITHUB_REF_NAME#v}" --generate-notes --verify-tag
