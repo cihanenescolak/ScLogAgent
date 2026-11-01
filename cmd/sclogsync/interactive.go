@@ -291,6 +291,22 @@ func dispatchElevated(u *ui.UI, args []string) int {
 	return cmdServiceControl(u, o)
 }
 
+// switchServer saves the server address. A different server invalidates the
+// saved login and the record of uploaded files: that server has none of them.
+func switchServer(store *state.Store, cfg *state.Config, server string) error {
+	if cfg.Server == server {
+		return nil
+	}
+	if cfg.Server != "" {
+		cfg.Token, cfg.UserName = "", ""
+		if err := store.ResetSent(nil); err != nil {
+			return err
+		}
+	}
+	cfg.Server = server
+	return store.SaveConfig(cfg)
+}
+
 // chooseServer resolves and validates the server URL.
 func chooseServer(ctx context.Context, u *ui.UI, store *state.Store, cfg *state.Config, o *options, reconfigure bool) (*api.Client, *api.AgentConfig, error) {
 	server := o.server
@@ -332,15 +348,8 @@ func chooseServer(ctx context.Context, u *ui.UI, store *state.Store, cfg *state.
 			continue
 		}
 		u.OK("server_ok", ac.ProtocolVersion)
-		if cfg.Server != server {
-			// A different server invalidates the saved login.
-			if cfg.Server != "" {
-				cfg.Token, cfg.UserName = "", ""
-			}
-			cfg.Server = server
-			if err := store.SaveConfig(cfg); err != nil {
-				return nil, nil, err
-			}
+		if err := switchServer(store, cfg, server); err != nil {
+			return nil, nil, err
 		}
 		return newClient(server, "", nil), ac, nil
 	}

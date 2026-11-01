@@ -22,7 +22,7 @@ jobs:
           go vet ./...
           go test ./...
       - name: Build
-        run: VERSION="${GITHUB_REF_NAME#v}" ./build.sh
+        run: VERSION="${GITHUB_REF_NAME#v}" SERVER=https://sclog.app ./build.sh
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
