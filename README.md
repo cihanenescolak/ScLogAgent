@@ -1,6 +1,6 @@
 # SCLogSync
 
-Windows client for **SC Log Viewer**, a site that turns Star Citizen's `Game.log` files into statistics:
+Windows client for **[SC Log Viewer](https://sclog.app)**, a site that turns Star Citizen's `Game.log` files into statistics:
 money in and out, missions, blueprints, deaths, trade runs, travel and more.
 
 SCLogSync uploads your finished game logs (`logbackups\`) and streams the running `Game.log` live while you
@@ -29,7 +29,7 @@ Requirements: Windows 10 or 11, 64-bit. No installer or runtime needed.
 
 Double-click `sclogsync.exe`.
 
-1. Enter the address of your SC Log Viewer server (asked once; the site's download page shows it).
+1. Press Enter to use [sclog.app](https://sclog.app), or type the address of another SC Log Viewer server (asked once).
 2. A browser opens: sign in on the site and approve the device with the code shown in the console.
 3. Pick the Star Citizen folder (detected on all drives and from the RSI Launcher settings), or type its path.
 4. Finished logs in `logbackups` are uploaded; files the server already has are skipped.
